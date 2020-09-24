@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EmployeeAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -26,9 +26,9 @@ namespace EmployeeAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<EmployeeDto>> GetEmployees()
+        public async Task<IEnumerable<EmployeeDto>> GetEmployees([FromQuery]int? id)
         {
-            var employeelist = await _employeeService.GetEmployees();
+            var employeelist = await _employeeService.GetEmployees(id);
             return employeelist;
         }
     }

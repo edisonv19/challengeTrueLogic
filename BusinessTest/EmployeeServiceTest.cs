@@ -41,17 +41,36 @@ namespace BusinessTest
             _repositoryMock.Setup(x => x.GetEmployees()).Returns(Task.FromResult(_employees));
 
             // Act
-            var employeeDtoList = _employeeService.GetEmployees().Result;
+            var employeeDtoList = _employeeService.GetEmployees(null).Result;
 
             // Assert
             Assert.IsNotNull(employeeDtoList);
             Assert.AreNotEqual(0, employeeDtoList.Count());
+            Assert.AreEqual(2, employeeDtoList.Count());
 
             // HourlySalaryEmployee => 120 * HourlySalary * 12 (HourlySalary = 60)
             Assert.AreEqual(86400, employeeDtoList.ElementAt(0).AnualSalary);
 
             // MonthlySalaryEmployee => MonthlySalary * 12 (HourlySalary = 6000)
             Assert.AreEqual(72000, employeeDtoList.ElementAt(1).AnualSalary);
+        }
+
+        [TestMethod]
+        public void GetEmployees_ByID_Ok()
+        {
+            // Arrange
+            _repositoryMock.Setup(x => x.GetEmployees()).Returns(Task.FromResult(_employees));
+
+            // Act
+            var employeeDtoList = _employeeService.GetEmployees(1).Result;
+
+            // Assert
+            Assert.IsNotNull(employeeDtoList);
+            Assert.AreNotEqual(0, employeeDtoList.Count());
+            Assert.AreEqual(1, employeeDtoList.Count());
+
+            // HourlySalaryEmployee => 120 * HourlySalary * 12 (HourlySalary = 60)
+            Assert.AreEqual(86400, employeeDtoList.ElementAt(0).AnualSalary);
         }
 
         private void LoadEmployees()

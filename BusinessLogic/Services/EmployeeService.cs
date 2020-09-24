@@ -14,6 +14,7 @@ namespace API.BusinessLogic.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
         private readonly EmployeeFactory _employeeFactory;
+
         public EmployeeService(IEmployeeRepository employeeRepository, IMapper mapper)
         {
             _employeeRepository = employeeRepository;
@@ -30,11 +31,11 @@ namespace API.BusinessLogic.Services
             return _mapper.Map<EmployeeDto>(anualEmployee);
         }
 
-        public async Task<IEnumerable<EmployeeDto>> GetEmployees()
+        public async Task<IEnumerable<EmployeeDto>> GetEmployees(int? id)
         {
             var employees = await _employeeRepository.GetEmployees();
 
-            var anualEmployees = employees.Select(x => _employeeFactory.GetEmployee(x)).ToList();
+            var anualEmployees = employees.Where(x => !id.HasValue || x.Id == id.Value).Select(x => _employeeFactory.GetEmployee(x));
 
             return _mapper.Map<IEnumerable<EmployeeDto>>(anualEmployees);
         }

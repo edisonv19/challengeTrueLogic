@@ -1,9 +1,3 @@
-using API.BusinessLogic.Interfaces;
-using API.BusinessLogic.Services;
-using API.DataAccess;
-using API.DataAccess.Interfaces;
-using API.Domain;
-using EmployeeAPI.Configurations;
 using Infrastructure.Utils.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace EmployeeAPI
+namespace EmployeeApp
 {
     public class Startup
     {
@@ -25,16 +19,10 @@ namespace EmployeeAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllersWithViews();
 
             // app Settings config
             services.Configure<AppSettings>(Configuration.GetSection("Apis"));
-
-            // Services
-            services.AddTransient<IEmployeeService, EmployeeService>();
-            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
-
-            services.AddAutoMapper();
 
             // Infra
             InfrastructureDependencyContainer.RegisterServices(services);
@@ -47,8 +35,14 @@ namespace EmployeeAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
             //app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -56,7 +50,9 @@ namespace EmployeeAPI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
